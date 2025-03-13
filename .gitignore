@@ -1,0 +1,5 @@
+# Ignore virtual environment
+venv/
+
+# Ignore everything inside the images directory
+images/*
