@@ -3,7 +3,7 @@ import cv2
 
 # Load reference images
 references = {}
-reference_paths = ["person1.jpg", "person2.jpg"]
+reference_paths = ["pu.jpg"]
 for path in reference_paths:
     image = face_recognition.load_image_file(path)
     encoding = face_recognition.face_encodings(image)[0]
