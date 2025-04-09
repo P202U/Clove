@@ -1,17 +1,31 @@
 import face_recognition
 import cv2
 import numpy as np
+import os
 
 # Get a reference to webcam #0 (the default one)
 video_capture = cv2.VideoCapture(0)
 
-# Load a sample picture and learn how to recognize it.
-pu_image = face_recognition.load_image_file("images/pu.jpg")
-pu_face_encoding = face_recognition.face_encodings(pu_image)[0]
+# Initialize arrays to store known face encodings and their names
+known_face_encodings = []
+known_face_names = []
 
-# Arrays of known face encodings and their names
-known_face_encodings = [pu_face_encoding]
-known_face_names = ["PU"]
+# Load multiple face images from a folder
+image_folder = "images"  # Folder where all the face images are stored
+
+# Loop through all images in the folder and load them
+for filename in os.listdir(image_folder):
+    if filename.endswith(".jpg") or filename.endswith(".png"):
+        image_path = os.path.join(image_folder, filename)
+        
+        # Load the image and get the encoding
+        person_image = face_recognition.load_image_file(image_path)
+        person_face_encoding = face_recognition.face_encodings(person_image)
+        
+        # If face encodings are found in the image, save the first encoding and the name
+        if person_face_encoding:
+            known_face_encodings.append(person_face_encoding[0])
+            known_face_names.append(os.path.splitext(filename)[0])  # Use the filename (without extension) as the name
 
 # Initialize variables
 face_locations = []
@@ -40,7 +54,7 @@ while True:
 
             face_names = []
             for face_encoding in face_encodings:
-                # See if the face is a match for the known face(s)
+                # See if the face is a match for any of the known faces
                 matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
                 name = "Unknown"
 
@@ -51,6 +65,10 @@ while True:
                     name = known_face_names[best_match_index]
 
                 face_names.append(name)
+
+                # Check if the name is known and print "Present"
+                if name != "Unknown":
+                    print(f"{name} is Present!")
 
     process_this_frame = not process_this_frame
 

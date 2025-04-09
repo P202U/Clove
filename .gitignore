@@ -2,4 +2,4 @@
 venv/
 
 # Ignore everything inside the images directory
-images/*
+static/images/*

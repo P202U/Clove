@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Image Upload</title>
+  </head>
+  <body>
+    <h1>Upload Image(s)</h1>
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+      <label for="file">Choose an image to upload:</label>
+      <input
+        type="file"
+        name="file"
+        id="file"
+        accept="image/*"
+        multiple
+        required
+      />
+      <button type="submit">Upload</button>
+    </form>
+
+    <h2>Uploaded Images</h2>
+    <ul>
+      {% for filename in 'static/images'|listdir %}
+      <li>
+        <img
+          src="{{ url_for('static', filename='images/' + filename) }}?{{ loop.index }}"
+          width="200"
+          alt="{{ filename }}"
+        />
+        <p>{{ filename }}</p>
+      </li>
+      {% endfor %}
+    </ul>
+  </body>
+</html>
