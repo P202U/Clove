@@ -2,24 +2,35 @@ import face_recognition
 import cv2
 import numpy as np
 import os
+import pickle 
 
 video_capture = cv2.VideoCapture(0)
 
-known_face_encodings = []
-known_face_names = []
+image_folder = "static/images"
+encoding_file = "face_encodings.pkl"
 
-image_folder = "static/images"  
+if os.path.exists(encoding_file):
+    with open(encoding_file, "rb") as f:
+        known_face_encodings, known_face_names = pickle.load(f)
+else:
+    # If no encodings file, calculate
+    known_face_encodings = []
+    known_face_names = []
 
-for filename in os.listdir(image_folder):
-    if filename.endswith(".jpg") or filename.endswith(".png"):
-        image_path = os.path.join(image_folder, filename)
-        
-        person_image = face_recognition.load_image_file(image_path)
-        person_face_encoding = face_recognition.face_encodings(person_image)
-        
-        if person_face_encoding:
-            known_face_encodings.append(person_face_encoding[0])
-            known_face_names.append(os.path.splitext(filename)[0]) 
+    for filename in os.listdir(image_folder):
+        if filename.endswith(".jpg") or filename.endswith(".png"):
+            image_path = os.path.join(image_folder, filename)
+            
+            person_image = face_recognition.load_image_file(image_path)
+            person_face_encoding = face_recognition.face_encodings(person_image)
+            
+            if person_face_encoding:
+                known_face_encodings.append(person_face_encoding[0])
+                known_face_names.append(os.path.splitext(filename)[0])
+
+    # Save the encodings to the file for later use
+    with open(encoding_file, "wb") as f:
+        pickle.dump((known_face_encodings, known_face_names), f)
 
 face_locations = []
 face_encodings = []
