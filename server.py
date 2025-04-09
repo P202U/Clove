@@ -3,31 +3,24 @@ import cv2
 import numpy as np
 import os
 
-# Get a reference to webcam #0 (the default one)
 video_capture = cv2.VideoCapture(0)
 
-# Initialize arrays to store known face encodings and their names
 known_face_encodings = []
 known_face_names = []
 
-# Load multiple face images from a folder
-image_folder = "images"  # Folder where all the face images are stored
+image_folder = "static/images"  
 
-# Loop through all images in the folder and load them
 for filename in os.listdir(image_folder):
     if filename.endswith(".jpg") or filename.endswith(".png"):
         image_path = os.path.join(image_folder, filename)
         
-        # Load the image and get the encoding
         person_image = face_recognition.load_image_file(image_path)
         person_face_encoding = face_recognition.face_encodings(person_image)
         
-        # If face encodings are found in the image, save the first encoding and the name
         if person_face_encoding:
             known_face_encodings.append(person_face_encoding[0])
-            known_face_names.append(os.path.splitext(filename)[0])  # Use the filename (without extension) as the name
+            known_face_names.append(os.path.splitext(filename)[0]) 
 
-# Initialize variables
 face_locations = []
 face_encodings = []
 face_names = []
@@ -54,7 +47,6 @@ while True:
 
             face_names = []
             for face_encoding in face_encodings:
-                # See if the face is a match for any of the known faces
                 matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
                 name = "Unknown"
 
@@ -66,13 +58,11 @@ while True:
 
                 face_names.append(name)
 
-                # Check if the name is known and print "Present"
                 if name != "Unknown":
                     print(f"{name} is Present!")
 
     process_this_frame = not process_this_frame
 
-    # Display the results
     for (top, right, bottom, left), name in zip(face_locations, face_names):
         # Scale back up face locations since the frame we detected in was scaled to 1/4 size
         top *= 4
@@ -95,6 +85,5 @@ while True:
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-# Release handle to the webcam
 video_capture.release()
 cv2.destroyAllWindows()
