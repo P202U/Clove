@@ -2,7 +2,7 @@ import face_recognition
 import cv2
 import numpy as np
 import os
-import pickle 
+import pickle
 
 video_capture = cv2.VideoCapture(0)
 
@@ -18,15 +18,19 @@ else:
     known_face_names = []
 
     for filename in os.listdir(image_folder):
-        if filename.endswith(".jpg") or filename.endswith(".png"):
+        if filename.endswith((".jpg", ".png", ".jpeg")):
             image_path = os.path.join(image_folder, filename)
-            
             person_image = face_recognition.load_image_file(image_path)
+
             person_face_encoding = face_recognition.face_encodings(person_image)
-            
-            if person_face_encoding:
+
+            if not person_face_encoding:
+                print(f"[!] No face detected in {filename}")
+            else:
+                print(f"[✓] Face encoding successful for {filename}")
                 known_face_encodings.append(person_face_encoding[0])
                 known_face_names.append(os.path.splitext(filename)[0])
+
 
     # Save the encodings to the file for later use
     with open(encoding_file, "wb") as f:
@@ -36,6 +40,7 @@ face_locations = []
 face_encodings = []
 face_names = []
 process_this_frame = True
+print(f"Loaded encodings: {known_face_names}")
 
 while True:
     # Grab a single frame of video
